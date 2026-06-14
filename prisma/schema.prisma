@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id                String      @id @default(uuid())
+  id                String      @id @default(cuid())
   email             String      @unique
   passwordHash      String
   name              String?
@@ -28,7 +28,7 @@ model User {
 }
 
 model FoodItem {
-  id           String       @id @default(uuid())
+  id           String       @id @default(cuid())
   name         String
   brand        String?
   barcode      String?
@@ -47,7 +47,7 @@ model FoodItem {
 }
 
 model Meal {
-  id         String      @id @default(uuid())
+  id         String      @id @default(cuid())
   userId     String
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   date       DateTime    @default(now())
@@ -57,7 +57,7 @@ model Meal {
 }
 
 model MealEntry {
-  id              String   @id @default(uuid())
+  id              String   @id @default(cuid())
   mealId          String
   meal            Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade)
   foodItemId      String
@@ -70,7 +70,7 @@ model MealEntry {
 }
 
 model WaterLog {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   date      DateTime @default(now())
@@ -78,7 +78,7 @@ model WaterLog {
 }
 
 model WeightLog {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   date      DateTime @default(now())

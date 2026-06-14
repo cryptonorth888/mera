@@ -1,17 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { email, password, name } = body;
 
-    console.log('Получены данные:', { email, name });
-
-    // Проверка на пустые поля
     if (!email || !password) {
       return NextResponse.json(
         { error: 'Email и пароль обязательны' },
@@ -19,7 +14,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Проверка длины пароля
     if (password.length < 6) {
       return NextResponse.json(
         { error: 'Пароль должен быть не менее 6 символов' },
@@ -27,12 +21,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Проверка, есть ли уже такой пользователь
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
-
-    console.log('Существующий пользователь:', existingUser);
 
     if (existingUser) {
       return NextResponse.json(
@@ -41,12 +32,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Хэшируем пароль
     const passwordHash = await bcrypt.hash(password, 10);
 
-    console.log('Создаём пользователя...');
-
-    // Создаём пользователя
     const user = await prisma.user.create({
       data: {
         email,
@@ -55,17 +42,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log('Пользователь создан:', user.id);
-
     return NextResponse.json(
       { message: 'Регистрация успешна', userId: user.id },
       { status: 201 }
     );
   } catch (error: any) {
     console.error('Ошибка регистрации:', error.message);
-    console.error('Полная ошибка:', error);
     return NextResponse.json(
-      { error: 'Внутренняя ошибка сервера: ' + error.message },
+      { error: 'Ошибка сервера. Попробуйте ещё раз.' },
       { status: 500 }
     );
   }
