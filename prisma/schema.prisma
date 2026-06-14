@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String      @id @default(uuid())
+  email             String      @unique
+  passwordHash      String
+  name              String?
+  age               Int?
+  gender            String?
+  weight            Float?
+  height            Float?
+  activityLevel     String?
+  dailyCalorieGoal  Int?
+  dailyProteinGoal  Int?
+  dailyFatGoal      Int?
+  dailyCarbsGoal    Int?
+  createdAt         DateTime    @default(now())
+  meals             Meal[]
+  waterLogs         WaterLog[]
+  weightLogs        WeightLog[]
+}
+
+model FoodItem {
+  id           String       @id @default(uuid())
+  name         String
+  brand        String?
+  barcode      String?
+  calories     Float
+  protein      Float
+  fat          Float
+  carbs        Float
+  fiber        Float?
+  servingSize  Float        @default(100)
+  servingUnit  String       @default("г")
+  isPublic     Boolean      @default(false)
+  isVerified   Boolean      @default(false)
+  createdById  String?
+  createdAt    DateTime     @default(now())
+  mealEntries  MealEntry[]
+}
+
+model Meal {
+  id         String      @id @default(uuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date       DateTime    @default(now())
+  mealType   String
+  createdAt  DateTime    @default(now())
+  entries    MealEntry[]
+}
+
+model MealEntry {
+  id              String   @id @default(uuid())
+  mealId          String
+  meal            Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  foodItemId      String
+  foodItem        FoodItem @relation(fields: [foodItemId], references: [id])
+  servings        Float    @default(1)
+  caloriesSnapshot Float
+  proteinSnapshot  Float
+  fatSnapshot      Float
+  carbsSnapshot    Float
+}
+
+model WaterLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  amountMl  Int
+}
+
+model WeightLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  weight    Float
+}
