@@ -123,7 +123,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-gray-400 text-lg">Загрузка...</p>
+        <p className="text-black text-lg">Загрузка...</p>
       </main>
     );
   }
@@ -131,7 +131,7 @@ export default function Dashboard() {
   if (!data) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-gray-400 text-lg">Нет данных</p>
+        <p className="text-black text-lg">Нет данных</p>
       </main>
     );
   }
@@ -176,14 +176,14 @@ export default function Dashboard() {
       {/* Вода */}
       <div className="mx-4 mt-4 bg-white rounded-xl p-4 shadow-sm">
         <div className="flex items-center justify-between mb-2">
-          <p className="font-semibold text-gray-700">💧 Вода</p>
+          <p className="font-semibold text-black">💧 Вода</p>
           <button onClick={addWater} className="text-blue-500 text-xl font-bold leading-none">+</button>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div className="bg-blue-400 h-2 rounded-full transition-all"
             style={{ width: `${Math.min((data.water.consumed / data.water.goal) * 100, 100)}%` }} />
         </div>
-        <p className="text-sm text-gray-500 mt-1">{data.water.consumed} мл из {data.water.goal} мл</p>
+        <p className="text-sm text-black mt-1">{data.water.consumed} мл из {data.water.goal} мл</p>
       </div>
 
       {/* Приёмы пищи */}
@@ -193,19 +193,19 @@ export default function Dashboard() {
           return (
             <div key={type} className="bg-white rounded-xl p-4 shadow-sm">
               <div className="flex items-center justify-between mb-2">
-                <p className="font-semibold text-gray-700">{mealTypeLabels[type]}</p>
+                <p className="font-semibold text-black">{mealTypeLabels[type]}</p>
                 <button onClick={() => openModal(type)} className="text-green-600 text-xl font-bold leading-none">+</button>
               </div>
               {meal && meal.entries.length > 0 ? (
                 <ul className="space-y-1">
                   {meal.entries.map((entry) => (
-                    <li key={entry.id} className="flex justify-between text-sm text-gray-600 items-center">
+                    <li key={entry.id} className="flex justify-between text-sm text-black items-center">
                       <span>{entry.foodName} ({entry.servings}г)</span>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{entry.calories} ккал</span>
                         <button
                           onClick={() => deleteEntry(entry.id)}
-                          className="text-red-400 hover:text-red-600 text-lg leading-none ml-1"
+                          className="text-red-500 hover:text-red-700 text-lg leading-none ml-1"
                         >
                           ✕
                         </button>
@@ -214,7 +214,7 @@ export default function Dashboard() {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-gray-400">Нет записей</p>
+                <p className="text-sm text-black">Нет записей</p>
               )}
             </div>
           );
@@ -224,8 +224,8 @@ export default function Dashboard() {
       {/* Нижняя навигация */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-3">
         <button className="text-green-600 font-semibold">📋 Дневник</button>
-        <button onClick={() => router.push('/goals')} className="text-gray-400">🎯 Цели</button>
-        <button className="text-gray-400">👤 Профиль</button>
+        <button onClick={() => router.push('/goals')} className="text-black">🎯 Цели</button>
+        <button className="text-black">👤 Профиль</button>
       </div>
 
       {/* Модальное окно */}
@@ -233,10 +233,10 @@ export default function Dashboard() {
         <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center">
           <div className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-800">
+              <h2 className="text-lg font-bold text-black">
                 Добавить в {mealTypeLabels[currentMealType]}
               </h2>
-              <button onClick={() => setShowModal(false)} className="text-gray-400 text-xl">✕</button>
+              <button onClick={() => setShowModal(false)} className="text-black text-xl">✕</button>
             </div>
 
             <input
@@ -244,7 +244,7 @@ export default function Dashboard() {
               placeholder="Поиск продуктов..."
               value={searchQuery}
               onChange={(e) => doSearch(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
               autoFocus
             />
 
@@ -256,9 +256,9 @@ export default function Dashboard() {
                     onClick={() => { setSelectedProduct(p); setSearchResults([]); setSearchQuery(''); }}
                     className={`p-3 rounded-xl cursor-pointer border ${selectedProduct?.id === p.id ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
-                    <p className="font-medium text-gray-800">{p.name}</p>
-                    {p.brand && <p className="text-xs text-gray-400">{p.brand}</p>}
-                    <p className="text-sm text-gray-500">{p.calories} ккал | Б:{p.protein} Ж:{p.fat} У:{p.carbs}</p>
+                    <p className="font-medium text-black">{p.name}</p>
+                    {p.brand && <p className="text-xs text-black">{p.brand}</p>}
+                    <p className="text-sm text-black">{p.calories} ккал | Б:{p.protein} Ж:{p.fat} У:{p.carbs}</p>
                   </div>
                 ))}
               </div>
@@ -266,11 +266,11 @@ export default function Dashboard() {
 
             {selectedProduct && (
               <div className="border-t pt-4">
-                <p className="font-semibold text-gray-800 mb-2">{selectedProduct.name}</p>
-                <p className="text-sm text-gray-500 mb-3">
+                <p className="font-semibold text-black mb-2">{selectedProduct.name}</p>
+                <p className="text-sm text-black mb-3">
                   На 100г: {selectedProduct.calories} ккал | Б:{selectedProduct.protein} Ж:{selectedProduct.fat} У:{selectedProduct.carbs}
                 </p>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Граммы: {servings}г</label>
+                <label className="block text-sm font-medium text-black mb-1">Граммы: {servings}г</label>
                 <input
                   type="range"
                   min="10"
