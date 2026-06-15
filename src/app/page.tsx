@@ -215,14 +215,12 @@ export default function Dashboard() {
         })}
       </div>
 
-      {/* Нижняя навигация */}
+            {/* Нижняя навигация */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-3">
         <button className="text-green-600 font-semibold">📋 Дневник</button>
-        <button className="text-gray-400">🔍 Поиск</button>
-        <button className="text-gray-400">🎯 Цели</button>
+        <button onClick={() => router.push('/goals')} className="text-gray-400">🎯 Цели</button>
         <button className="text-gray-400">👤 Профиль</button>
       </div>
-
       {/* Модальное окно поиска продуктов */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center">
