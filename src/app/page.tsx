@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
-// Типы
 interface MealEntry {
   id: string;
   foodName: string;
@@ -48,7 +47,6 @@ export default function Dashboard() {
   const [data, setData] = useState<DailyData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Модальное окно
   const [showModal, setShowModal] = useState(false);
   const [currentMealType, setCurrentMealType] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -72,7 +70,6 @@ export default function Dashboard() {
 
   useEffect(() => { loadData(); }, [loadData]);
 
-  // Поиск продуктов
   const doSearch = async (q: string) => {
     setSearchQuery(q);
     if (q.length < 1) { setSearchResults([]); return; }
@@ -81,7 +78,6 @@ export default function Dashboard() {
     setSearchResults(json.products || []);
   };
 
-  // Открыть модалку
   const openModal = (mealType: string) => {
     setCurrentMealType(mealType);
     setSearchQuery('');
@@ -91,7 +87,6 @@ export default function Dashboard() {
     setShowModal(true);
   };
 
-  // Добавить продукт
   const addProduct = async () => {
     if (!selectedProduct) return;
     setAdding(true);
@@ -106,12 +101,16 @@ export default function Dashboard() {
     });
     if (res.ok) {
       setShowModal(false);
-      loadData(); // обновить дашборд
+      loadData();
     }
     setAdding(false);
   };
 
-  // Быстрый стакан воды
+  const deleteEntry = async (entryId: string) => {
+    await fetch(`/api/meals/${entryId}`, { method: 'DELETE' });
+    loadData();
+  };
+
   const addWater = async () => {
     await fetch('/api/water', {
       method: 'POST',
@@ -143,7 +142,6 @@ export default function Dashboard() {
 
   return (
     <main className="min-h-screen bg-gray-50 pb-24">
-      {/* Верхняя панель */}
       <div className="bg-green-600 text-white px-4 pt-12 pb-6 rounded-b-3xl">
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -201,9 +199,17 @@ export default function Dashboard() {
               {meal && meal.entries.length > 0 ? (
                 <ul className="space-y-1">
                   {meal.entries.map((entry) => (
-                    <li key={entry.id} className="flex justify-between text-sm text-gray-600">
+                    <li key={entry.id} className="flex justify-between text-sm text-gray-600 items-center">
                       <span>{entry.foodName} ({entry.servings}г)</span>
-                      <span className="font-medium">{entry.calories} ккал</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{entry.calories} ккал</span>
+                        <button
+                          onClick={() => deleteEntry(entry.id)}
+                          className="text-red-400 hover:text-red-600 text-lg leading-none ml-1"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -215,13 +221,14 @@ export default function Dashboard() {
         })}
       </div>
 
-            {/* Нижняя навигация */}
+      {/* Нижняя навигация */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-3">
         <button className="text-green-600 font-semibold">📋 Дневник</button>
         <button onClick={() => router.push('/goals')} className="text-gray-400">🎯 Цели</button>
         <button className="text-gray-400">👤 Профиль</button>
       </div>
-      {/* Модальное окно поиска продуктов */}
+
+      {/* Модальное окно */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center">
           <div className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 max-h-[80vh] overflow-y-auto">
@@ -232,7 +239,6 @@ export default function Dashboard() {
               <button onClick={() => setShowModal(false)} className="text-gray-400 text-xl">✕</button>
             </div>
 
-            {/* Поле поиска */}
             <input
               type="text"
               placeholder="Поиск продуктов..."
@@ -242,7 +248,6 @@ export default function Dashboard() {
               autoFocus
             />
 
-            {/* Результаты */}
             {searchResults.length > 0 && (
               <div className="space-y-2 mb-4">
                 {searchResults.map((p) => (
@@ -259,7 +264,6 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* Если продукт выбран — выбор граммовки */}
             {selectedProduct && (
               <div className="border-t pt-4">
                 <p className="font-semibold text-gray-800 mb-2">{selectedProduct.name}</p>

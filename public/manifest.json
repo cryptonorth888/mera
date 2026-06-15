@@ -1,0 +1,22 @@
+{
+  "name": "Мера — Счётчик калорий",
+  "short_name": "Мера",
+  "description": "Знай, что ешь. Счётчик калорий для России.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f5f0",
+  "theme_color": "#1B5E20",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
