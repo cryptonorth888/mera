@@ -19,23 +19,19 @@ const translitMap: Record<string, string> = {
 };
 
 function fixLayout(input: string): string {
-  // Проверяем, есть ли в строке кириллица
   if (/[а-яА-ЯёЁ]/.test(input)) return input;
-  
-  // Если вся строка из латиницы и знаков — преобразуем как раскладку
   return input.split('').map(ch => translitMap[ch] || ch).join('');
 }
 
 export async function GET(request: NextRequest) {
   try {
     const q = request.nextUrl.searchParams.get('q') || '';
-    
     const query = fixLayout(q);
-    
+
     let products = await prisma.foodItem.findMany({
       where: {
         isPublic: true,
-        name: { contains: query },
+        name: { startsWith: query },
       },
       take: 20,
       orderBy: { name: 'asc' },
@@ -47,7 +43,7 @@ export async function GET(request: NextRequest) {
       products = await prisma.foodItem.findMany({
         where: {
           isPublic: true,
-          name: { contains: qCapitalized },
+          name: { startsWith: qCapitalized },
         },
         take: 20,
         orderBy: { name: 'asc' },
