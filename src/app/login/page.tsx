@@ -31,7 +31,6 @@ export default function LoginPage() {
         return;
       }
 
-      // Вход выполнен — переходим на главную
       router.push('/');
     } catch {
       setError('Не удалось соединиться с сервером');
@@ -57,30 +56,30 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-black mb-1">
               Email
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className=\ placeholder:text-gray-700\ placeholder="example@mail.ru"
+              placeholder="example@mail.ru"
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-black placeholder:text-gray-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-black mb-1">
               Пароль
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className=\ placeholder:text-gray-700\ placeholder="Введите пароль"
+              placeholder="Введите пароль"
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-black placeholder:text-gray-500"
             />
           </div>
 

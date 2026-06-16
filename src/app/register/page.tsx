@@ -65,7 +65,7 @@ export default function RegisterPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Александр"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-black placeholder:text-gray-400"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-black placeholder:text-gray-500"
             />
           </div>
 
@@ -79,7 +79,7 @@ export default function RegisterPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@mail.ru"
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-black placeholder:text-gray-400"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-black placeholder:text-gray-500"
             />
           </div>
 
@@ -93,7 +93,7 @@ export default function RegisterPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Минимум 6 символов"
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-black placeholder:text-gray-400"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-black placeholder:text-gray-500"
             />
           </div>
 
