@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,49 +6,36 @@ export async function POST(request: NextRequest) {
     const { email, password, name } = body;
 
     if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email и пароль обязательны' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Email и пароль обязательны' }, { status: 400 });
     }
 
     if (password.length < 6) {
-      return NextResponse.json(
-        { error: 'Пароль должен быть не менее 6 символов' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Пароль не менее 6 символов' }, { status: 400 });
     }
 
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
+    // Динамический импорт Prisma (чтобы увидеть ошибку)
+    const { PrismaClient } = await import('@prisma/client');
+    const prisma = new PrismaClient();
+
+    const existingUser = await prisma.user.findUnique({ where: { email } });
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: 'Пользователь с таким email уже существует' },
-        { status: 409 }
-      );
+      await prisma.$disconnect();
+      return NextResponse.json({ error: 'Пользователь уже существует' }, { status: 409 });
     }
 
+    const bcrypt = await import('bcryptjs');
     const passwordHash = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
-      data: {
-        email,
-        passwordHash,
-        name: name || '',
-      },
+      data: { email, passwordHash, name: name || '' },
     });
 
-    return NextResponse.json(
-      { message: 'Регистрация успешна', userId: user.id },
-      { status: 201 }
-    );
+    await prisma.$disconnect();
+
+    return NextResponse.json({ message: 'Регистрация успешна', userId: user.id }, { status: 201 });
   } catch (error: any) {
-    console.error('Ошибка регистрации:', error.message);
-    return NextResponse.json(
-      { error: 'Ошибка сервера. Попробуйте ещё раз.' },
-      { status: 500 }
-    );
+    console.error('Register error:', error.message);
+    return NextResponse.json({ error: 'Ошибка сервера: ' + error.message }, { status: 500 });
   }
 }
