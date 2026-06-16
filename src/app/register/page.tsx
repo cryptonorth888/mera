@@ -46,7 +46,7 @@ export default function RegisterPage() {
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">
           Мера
         </h1>
-        <p className="text-center text-gray-500 mb-6">
+        <p className="text-center text-black mb-6">
           Создайте аккаунт
         </p>
 
@@ -107,7 +107,7 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-black mt-6">
           Уже есть аккаунт?{' '}
           <Link href="/login" className="text-green-600 hover:underline">
             Войти
