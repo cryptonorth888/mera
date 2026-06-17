@@ -55,6 +55,20 @@ export default function Dashboard() {
   const [servings, setServings] = useState(100);
   const [adding, setAdding] = useState(false);
 
+  // Тема
+  const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('auto');
+
+  useEffect(() => {
+    const saved = (localStorage.getItem('theme') as 'light' | 'dark' | 'auto') || 'auto';
+    setTheme(saved);
+  }, []);
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    const isDark = theme === 'dark' || (theme === 'auto' && (hour < 6 || hour >= 18));
+    document.documentElement.classList.toggle('dark', isDark);
+  }, [theme]);
+
   const loadData = useCallback(() => {
     fetch('/api/daily-summary')
       .then((res) => {
@@ -122,16 +136,16 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-black text-lg">Загрузка...</p>
+      <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <p className="text-black dark:text-white text-lg">Загрузка...</p>
       </main>
     );
   }
 
   if (!data) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-black text-lg">Нет данных</p>
+      <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <p className="text-black dark:text-white text-lg">Нет данных</p>
       </main>
     );
   }
@@ -141,14 +155,27 @@ export default function Dashboard() {
   );
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-24">
-      <div className="bg-green-600 text-white px-4 pt-12 pb-6 rounded-b-3xl">
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-24">
+      <div className="bg-green-600 dark:bg-green-800 text-white px-4 pt-12 pb-6 rounded-b-3xl">
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-sm opacity-80">Сегодня</p>
             <p className="text-xl font-bold">{data.date}</p>
           </div>
-          <p className="text-lg font-semibold">Привет, {data.userName || 'Друг'}!</p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                const next = theme === 'light' ? 'dark' : theme === 'dark' ? 'auto' : 'light';
+                setTheme(next);
+                localStorage.setItem('theme', next);
+              }}
+              className="text-xl"
+              title="Сменить тему"
+            >
+              {theme === 'dark' ? '🌙' : theme === 'light' ? '☀️' : '🔄'}
+            </button>
+            <p className="text-lg font-semibold">Привет, {data.userName || 'Друг'}!</p>
+          </div>
         </div>
 
         <div className="flex justify-center mb-4">
@@ -174,16 +201,16 @@ export default function Dashboard() {
       </div>
 
       {/* Вода */}
-      <div className="mx-4 mt-4 bg-white rounded-xl p-4 shadow-sm">
+      <div className="mx-4 mt-4 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
         <div className="flex items-center justify-between mb-2">
-          <p className="font-semibold text-black">💧 Вода</p>
+          <p className="font-semibold text-black dark:text-white">💧 Вода</p>
           <button onClick={addWater} className="text-blue-500 text-xl font-bold leading-none">+</button>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
           <div className="bg-blue-400 h-2 rounded-full transition-all"
             style={{ width: `${Math.min((data.water.consumed / data.water.goal) * 100, 100)}%` }} />
         </div>
-        <p className="text-sm text-black mt-1">{data.water.consumed} мл из {data.water.goal} мл</p>
+        <p className="text-sm text-black dark:text-gray-300 mt-1">{data.water.consumed} мл из {data.water.goal} мл</p>
       </div>
 
       {/* Приёмы пищи */}
@@ -191,15 +218,15 @@ export default function Dashboard() {
         {['breakfast', 'lunch', 'dinner', 'snack'].map((type) => {
           const meal = data.meals.find((m) => m.mealType === type);
           return (
-            <div key={type} className="bg-white rounded-xl p-4 shadow-sm">
+            <div key={type} className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
               <div className="flex items-center justify-between mb-2">
-                <p className="font-semibold text-black">{mealTypeLabels[type]}</p>
+                <p className="font-semibold text-black dark:text-white">{mealTypeLabels[type]}</p>
                 <button onClick={() => openModal(type)} className="text-green-600 text-xl font-bold leading-none">+</button>
               </div>
               {meal && meal.entries.length > 0 ? (
                 <ul className="space-y-1">
                   {meal.entries.map((entry) => (
-                    <li key={entry.id} className="flex justify-between text-sm text-black items-center">
+                    <li key={entry.id} className="flex justify-between text-sm text-black dark:text-gray-200 items-center">
                       <span>{entry.foodName} ({entry.servings}г)</span>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{entry.calories} ккал</span>
@@ -214,7 +241,7 @@ export default function Dashboard() {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-black">Нет записей</p>
+                <p className="text-sm text-black dark:text-gray-400">Нет записей</p>
               )}
             </div>
           );
@@ -222,21 +249,21 @@ export default function Dashboard() {
       </div>
 
       {/* Нижняя навигация */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-3">
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around py-3">
         <button className="text-green-600 font-semibold">📋 Дневник</button>
-        <button onClick={() => router.push('/goals')} className="text-black">🎯 Цели</button>
-        <button className="text-black">👤 Профиль</button>
+        <button onClick={() => router.push('/goals')} className="text-black dark:text-white">🎯 Цели</button>
+        <button className="text-black dark:text-white">👤 Профиль</button>
       </div>
 
       {/* Модальное окно */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center">
-          <div className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 max-h-[80vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-black">
+              <h2 className="text-lg font-bold text-black dark:text-white">
                 Добавить в {mealTypeLabels[currentMealType]}
               </h2>
-              <button onClick={() => setShowModal(false)} className="text-black text-xl">✕</button>
+              <button onClick={() => setShowModal(false)} className="text-black dark:text-white text-xl">✕</button>
             </div>
 
             <input
@@ -244,7 +271,7 @@ export default function Dashboard() {
               placeholder="Поиск продуктов..."
               value={searchQuery}
               onChange={(e) => doSearch(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white dark:bg-gray-700"
               autoFocus
             />
 
@@ -254,23 +281,23 @@ export default function Dashboard() {
                   <div
                     key={p.id}
                     onClick={() => { setSelectedProduct(p); setSearchResults([]); setSearchQuery(''); }}
-                    className={`p-3 rounded-xl cursor-pointer border ${selectedProduct?.id === p.id ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:bg-gray-50'}`}
+                    className={`p-3 rounded-xl cursor-pointer border dark:border-gray-600 ${selectedProduct?.id === p.id ? 'border-green-500 bg-green-50 dark:bg-green-900' : 'border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
                   >
-                    <p className="font-medium text-black">{p.name}</p>
-                    {p.brand && <p className="text-xs text-black">{p.brand}</p>}
-                    <p className="text-sm text-black">{p.calories} ккал | Б:{p.protein} Ж:{p.fat} У:{p.carbs}</p>
+                    <p className="font-medium text-black dark:text-white">{p.name}</p>
+                    {p.brand && <p className="text-xs text-black dark:text-gray-400">{p.brand}</p>}
+                    <p className="text-sm text-black dark:text-gray-300">{p.calories} ккал | Б:{p.protein} Ж:{p.fat} У:{p.carbs}</p>
                   </div>
                 ))}
               </div>
             )}
 
             {selectedProduct && (
-              <div className="border-t pt-4">
-                <p className="font-semibold text-black mb-2">{selectedProduct.name}</p>
-                <p className="text-sm text-black mb-3">
+              <div className="border-t dark:border-gray-600 pt-4">
+                <p className="font-semibold text-black dark:text-white mb-2">{selectedProduct.name}</p>
+                <p className="text-sm text-black dark:text-gray-300 mb-3">
                   На 100г: {selectedProduct.calories} ккал | Б:{selectedProduct.protein} Ж:{selectedProduct.fat} У:{selectedProduct.carbs}
                 </p>
-                <label className="block text-sm font-medium text-black mb-1">Граммы: {servings}г</label>
+                <label className="block text-sm font-medium text-black dark:text-white mb-1">Граммы: {servings}г</label>
                 <input
                   type="range"
                   min="10"
