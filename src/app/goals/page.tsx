@@ -10,6 +10,7 @@ export default function GoalsPage() {
   const [fat, setFat] = useState(65);
   const [carbs, setCarbs] = useState(250);
   const [weight, setWeight] = useState('');
+  const [targetWeight, setTargetWeight] = useState('');
   const [height, setHeight] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
@@ -30,6 +31,7 @@ export default function GoalsPage() {
           setFat(data.fat);
           setCarbs(data.carbs);
           if (data.weight) setWeight(String(data.weight));
+          if (data.targetWeight) setTargetWeight(String(data.targetWeight));
           if (data.height) setHeight(String(data.height));
           if (data.age) setAge(String(data.age));
           if (data.gender) setGender(data.gender);
@@ -40,8 +42,8 @@ export default function GoalsPage() {
   }, [router]);
 
   const autoCalculate = () => {
-    if (!weight || !height || !age || !gender) return;
-    const w = parseFloat(weight);
+    const w = targetWeight ? parseFloat(targetWeight) : weight ? parseFloat(weight) : null;
+    if (!w || !height || !age || !gender) return;
     const h = parseFloat(height);
     const a = parseInt(age);
     let bmr = 0;
@@ -59,7 +61,15 @@ export default function GoalsPage() {
     const res = await fetch('/api/goals', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ calories, protein, fat, carbs, weight: weight ? parseFloat(weight) : null, height: height ? parseFloat(height) : null, age: age ? parseInt(age) : null, gender: gender || null, activityLevel: activityLevel || null }),
+      body: JSON.stringify({
+        calories, protein, fat, carbs,
+        weight: weight ? parseFloat(weight) : null,
+        targetWeight: targetWeight ? parseFloat(targetWeight) : null,
+        height: height ? parseFloat(height) : null,
+        age: age ? parseInt(age) : null,
+        gender: gender || null,
+        activityLevel: activityLevel || null,
+      }),
     });
     if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 2000); }
   };
@@ -72,12 +82,13 @@ export default function GoalsPage() {
       <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm mb-4 space-y-3">
         <h2 className="font-semibold text-gray-700 dark:text-white">Ваши данные</h2>
         <div className="grid grid-cols-2 gap-3">
-          <div><label className="text-sm text-gray-500 dark:text-gray-400">Вес (кг)</label><input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" placeholder="80" /></div>
+          <div><label className="text-sm text-gray-500 dark:text-gray-400">Текущий вес (кг)</label><input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" placeholder="80" /></div>
+          <div><label className="text-sm text-gray-500 dark:text-gray-400">Целевой вес (кг)</label><input type="number" value={targetWeight} onChange={(e) => setTargetWeight(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" placeholder="75" /></div>
           <div><label className="text-sm text-gray-500 dark:text-gray-400">Рост (см)</label><input type="number" value={height} onChange={(e) => setHeight(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" placeholder="175" /></div>
           <div><label className="text-sm text-gray-500 dark:text-gray-400">Возраст</label><input type="number" value={age} onChange={(e) => setAge(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" placeholder="30" /></div>
           <div><label className="text-sm text-gray-500 dark:text-gray-400">Пол</label><select value={gender} onChange={(e) => setGender(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm"><option value="">Выбрать</option><option value="male">Мужской</option><option value="female">Женский</option></select></div>
+          <div><label className="text-sm text-gray-500 dark:text-gray-400">Активность</label><select value={activityLevel} onChange={(e) => setActivityLevel(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm"><option value="">Выбрать</option><option value="sedentary">Сидячий</option><option value="light">Лёгкая</option><option value="moderate">Средняя</option><option value="active">Высокая</option><option value="extreme">Экстремальная</option></select></div>
         </div>
-        <div><label className="text-sm text-gray-500 dark:text-gray-400">Активность</label><select value={activityLevel} onChange={(e) => setActivityLevel(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm mt-1"><option value="">Выбрать</option><option value="sedentary">Сидячий</option><option value="light">Лёгкая</option><option value="moderate">Средняя</option><option value="active">Высокая</option><option value="extreme">Экстремальная</option></select></div>
         <button onClick={autoCalculate} className="w-full py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">Рассчитать норму</button>
       </div>
       <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm space-y-4">
@@ -93,7 +104,7 @@ export default function GoalsPage() {
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around py-3">
         <button onClick={() => router.push('/')} className="text-black dark:text-white">📋 Дневник</button>
         <button className="text-green-600 font-semibold">🎯 Цели</button>
-        <button className="text-black dark:text-white">👤 Профиль</button>
+        <button onClick={() => router.push('/weight')} className="text-black dark:text-white">📉 Вес</button>
       </div>
     </main>
   );

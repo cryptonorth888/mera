@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
       dailyFatGoal: true,
       dailyCarbsGoal: true,
       weight: true,
+      targetWeight: true,
       height: true,
       age: true,
       gender: true,
@@ -40,6 +41,7 @@ export async function GET(request: NextRequest) {
     fat: user?.dailyFatGoal || 65,
     carbs: user?.dailyCarbsGoal || 250,
     weight: user?.weight || null,
+    targetWeight: user?.targetWeight || null,
     height: user?.height || null,
     age: user?.age || null,
     gender: user?.gender || null,
@@ -52,7 +54,7 @@ export async function PUT(request: NextRequest) {
   if (!userId) return NextResponse.json({ error: 'Не авторизован' }, { status: 401 });
 
   const body = await request.json();
-  const { calories, protein, fat, carbs, weight, height, age, gender, activityLevel } = body;
+  const { calories, protein, fat, carbs, weight, targetWeight, height, age, gender, activityLevel } = body;
 
   await prisma.user.update({
     where: { id: userId },
@@ -62,6 +64,7 @@ export async function PUT(request: NextRequest) {
       dailyFatGoal: fat,
       dailyCarbsGoal: carbs,
       weight: weight || undefined,
+      targetWeight: targetWeight || undefined,
       height: height || undefined,
       age: age || undefined,
       gender: gender || undefined,

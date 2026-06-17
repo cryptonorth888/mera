@@ -55,7 +55,6 @@ export default function Dashboard() {
   const [servings, setServings] = useState(100);
   const [adding, setAdding] = useState(false);
 
-  // Тема
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
@@ -242,7 +241,7 @@ export default function Dashboard() {
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around py-3">
         <button className="text-green-600 font-semibold">📋 Дневник</button>
         <button onClick={() => router.push('/goals')} className="text-black dark:text-white">🎯 Цели</button>
-        <button className="text-black dark:text-white">👤 Профиль</button>
+        <button onClick={() => router.push('/weight')} className="text-black dark:text-white">📉 Вес</button>
       </div>
 
       {/* Модальное окно */}
