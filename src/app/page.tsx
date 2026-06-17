@@ -55,6 +55,17 @@ export default function Dashboard() {
   const [servings, setServings] = useState(100);
   const [adding, setAdding] = useState(false);
 
+  const [showCustomForm, setShowCustomForm] = useState(false);
+  const [customName, setCustomName] = useState('');
+  const [customBrand, setCustomBrand] = useState('');
+  const [customCalories, setCustomCalories] = useState('');
+  const [customProtein, setCustomProtein] = useState('');
+  const [customFat, setCustomFat] = useState('');
+  const [customCarbs, setCustomCarbs] = useState('');
+  const [customFiber, setCustomFiber] = useState('');
+  const [creating, setCreating] = useState(false);
+  const [createMessage, setCreateMessage] = useState('');
+
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
@@ -100,6 +111,8 @@ export default function Dashboard() {
     setSearchResults([]);
     setSelectedProduct(null);
     setServings(100);
+    setShowCustomForm(false);
+    setCreateMessage('');
     setShowModal(true);
   };
 
@@ -189,7 +202,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Вода */}
       <div className="mx-4 mt-4 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <p className="font-semibold text-black dark:text-white">💧 Вода</p>
@@ -202,7 +214,6 @@ export default function Dashboard() {
         <p className="text-sm text-black dark:text-gray-300 mt-1">{data.water.consumed} мл из {data.water.goal} мл</p>
       </div>
 
-      {/* Приёмы пищи */}
       <div className="mx-4 mt-4 space-y-3">
         {['breakfast', 'lunch', 'dinner', 'snack'].map((type) => {
           const meal = data.meals.find((m) => m.mealType === type);
@@ -237,17 +248,15 @@ export default function Dashboard() {
         })}
       </div>
 
-      {/* Нижняя навигация */}
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around py-3">
         <button className="text-green-600 font-semibold">📋 Дневник</button>
         <button onClick={() => router.push('/goals')} className="text-black dark:text-white">🎯 Цели</button>
         <button onClick={() => router.push('/weight')} className="text-black dark:text-white">📉 Вес</button>
       </div>
 
-      {/* Модальное окно */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center">
-          <div className="bg-white dark:bg-gray-800 w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 max-h-[80vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-black dark:text-white">
                 Добавить в {mealTypeLabels[currentMealType]}
@@ -263,6 +272,75 @@ export default function Dashboard() {
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white dark:bg-gray-700"
               autoFocus
             />
+
+            <button
+              onClick={() => {
+                setSelectedProduct(null);
+                setSearchResults([]);
+                setSearchQuery('');
+                setShowCustomForm(!showCustomForm);
+              }}
+              className="w-full py-2 text-sm text-green-600 dark:text-green-400 border border-dashed border-green-400 dark:border-green-600 rounded-xl mb-3 hover:bg-green-50 dark:hover:bg-green-900 transition"
+            >
+              ➕ Свой продукт
+            </button>
+
+            {showCustomForm && (
+              <div className="border-t dark:border-gray-600 pt-4 space-y-3 mb-4">
+                <h3 className="font-semibold text-black dark:text-white">Новый продукт</h3>
+                <input type="text" value={customName} onChange={(e) => setCustomName(e.target.value)} placeholder="Название *" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" />
+                <input type="text" value={customBrand} onChange={(e) => setCustomBrand(e.target.value)} placeholder="Бренд (необязательно)" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" />
+                <p className="text-xs text-gray-500 dark:text-gray-400">Пищевая ценность на 100 г продукта</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <input type="number" value={customCalories} onChange={(e) => setCustomCalories(e.target.value)} placeholder="Ккал *" className="px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" />
+                  <input type="number" value={customProtein} onChange={(e) => setCustomProtein(e.target.value)} placeholder="Белки (г) *" className="px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" />
+                  <input type="number" value={customFat} onChange={(e) => setCustomFat(e.target.value)} placeholder="Жиры (г) *" className="px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" />
+                  <input type="number" value={customCarbs} onChange={(e) => setCustomCarbs(e.target.value)} placeholder="Углеводы (г) *" className="px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" />
+                </div>
+                <input type="number" value={customFiber} onChange={(e) => setCustomFiber(e.target.value)} placeholder="Клетчатка (г)" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" />
+                {createMessage && (
+                  <div className="bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 text-sm p-3 rounded-lg text-center font-medium animate-pulse">
+                    {createMessage}
+                  </div>
+                )}
+                <button
+                  onClick={async () => {
+                    setCreating(true);
+                    setCreateMessage('');
+                    const res = await fetch('/api/food/create', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        name: customName,
+                        brand: customBrand,
+                        calories: parseFloat(customCalories),
+                        protein: parseFloat(customProtein),
+                        fat: parseFloat(customFat),
+                        carbs: parseFloat(customCarbs),
+                        fiber: customFiber ? parseFloat(customFiber) : 0,
+                      }),
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                      setCreateMessage(data.becamePublic ? '✅ Продукт добавлен в общую базу!' : '✅ Продукт успешно сохранён!');
+                      setCustomName(''); setCustomBrand(''); setCustomCalories(''); setCustomProtein(''); setCustomFat(''); setCustomCarbs(''); setCustomFiber('');
+                      if (data.product) {
+                        setSelectedProduct(data.product);
+                        setShowCustomForm(false);
+                      }
+                      setTimeout(() => setCreateMessage(''), 3000);
+                    } else {
+                      setCreateMessage('❌ ' + (data.error || 'Ошибка'));
+                    }
+                    setCreating(false);
+                  }}
+                  disabled={creating}
+                  className="w-full py-2 bg-green-600 text-white rounded-lg text-sm font-semibold disabled:opacity-50"
+                >
+                  {creating ? 'Создание...' : 'Создать продукт'}
+                </button>
+              </div>
+            )}
 
             {searchResults.length > 0 && (
               <div className="space-y-2 mb-4">
