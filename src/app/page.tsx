@@ -56,17 +56,20 @@ export default function Dashboard() {
   const [adding, setAdding] = useState(false);
 
   // Тема
-  const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('auto');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    const saved = (localStorage.getItem('theme') as 'light' | 'dark' | 'auto') || 'auto';
-    setTheme(saved);
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') {
+      setTheme(saved);
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(prefersDark ? 'dark' : 'light');
+    }
   }, []);
 
   useEffect(() => {
-    const hour = new Date().getHours();
-    const isDark = theme === 'dark' || (theme === 'auto' && (hour < 6 || hour >= 18));
-    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 
   const loadData = useCallback(() => {
@@ -162,20 +165,7 @@ export default function Dashboard() {
             <p className="text-sm opacity-80">Сегодня</p>
             <p className="text-xl font-bold">{data.date}</p>
           </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                const next = theme === 'light' ? 'dark' : theme === 'dark' ? 'auto' : 'light';
-                setTheme(next);
-                localStorage.setItem('theme', next);
-              }}
-              className="text-xl"
-              title="Сменить тему"
-            >
-              {theme === 'dark' ? '🌙' : theme === 'light' ? '☀️' : '🔄'}
-            </button>
-            <p className="text-lg font-semibold">Привет, {data.userName || 'Друг'}!</p>
-          </div>
+          <p className="text-lg font-semibold">Привет, {data.userName || 'Друг'}!</p>
         </div>
 
         <div className="flex justify-center mb-4">
