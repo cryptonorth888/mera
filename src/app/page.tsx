@@ -252,6 +252,7 @@ export default function Dashboard() {
         <button className="text-green-600 font-semibold">📋 Дневник</button>
         <button onClick={() => router.push('/goals')} className="text-black dark:text-white">🎯 Цели</button>
         <button onClick={() => router.push('/weight')} className="text-black dark:text-white">📉 Вес</button>
+        <button onClick={() => router.push('/profile')} className="text-black dark:text-white">👤 Профиль</button>
       </div>
 
       {showModal && (

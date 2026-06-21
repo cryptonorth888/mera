@@ -181,6 +181,7 @@ export default function GoalsPage() {
         <button onClick={() => router.push('/')} className="text-black dark:text-white">📋 Дневник</button>
         <button className="text-green-600 font-semibold">🎯 Цели</button>
         <button onClick={() => router.push('/weight')} className="text-black dark:text-white">📉 Вес</button>
+        <button onClick={() => router.push('/profile')} className="text-black dark:text-white">👤 Профиль</button>
       </div>
     </main>
   );

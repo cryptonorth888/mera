@@ -202,6 +202,7 @@ export default function WeightPage() {
         <button onClick={() => router.push('/')} className="text-black dark:text-white">📋 Дневник</button>
         <button onClick={() => router.push('/goals')} className="text-black dark:text-white">🎯 Цели</button>
         <button className="text-green-600 font-semibold">📉 Вес</button>
+        <button onClick={() => router.push('/profile')} className="text-black dark:text-white">👤 Профиль</button>
       </div>
     </main>
   );
