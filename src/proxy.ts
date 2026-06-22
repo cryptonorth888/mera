@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 
-export default function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const response = NextResponse.next();
 
   response.headers.set('X-Frame-Options', 'DENY');

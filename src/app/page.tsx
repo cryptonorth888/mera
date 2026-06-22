@@ -66,6 +66,8 @@ export default function Dashboard() {
   const [creating, setCreating] = useState(false);
   const [createMessage, setCreateMessage] = useState('');
 
+  const [barcodeInput, setBarcodeInput] = useState('');
+
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
@@ -113,6 +115,7 @@ export default function Dashboard() {
     setServings(100);
     setShowCustomForm(false);
     setCreateMessage('');
+    setBarcodeInput('');
     setShowModal(true);
   };
 
@@ -273,6 +276,32 @@ export default function Dashboard() {
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white dark:bg-gray-700"
               autoFocus
             />
+
+            <div className="flex gap-2 mb-3">
+              <input
+                type="text"
+                placeholder="Штрихкод (вручную)"
+                value={barcodeInput}
+                onChange={(e) => setBarcodeInput(e.target.value)}
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm"
+              />
+              <button
+                onClick={async () => {
+                  if (!barcodeInput) return;
+                  const res = await fetch(`/api/food/barcode/${barcodeInput}`);
+                  const data = await res.json();
+                  if (data.product) {
+                    setSelectedProduct(data.product);
+                    setBarcodeInput('');
+                  } else {
+                    alert('Продукт не найден в базе.');
+                  }
+                }}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-semibold"
+              >
+                🔍
+              </button>
+            </div>
 
             <button
               onClick={() => {
