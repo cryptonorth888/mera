@@ -209,7 +209,7 @@ export default function Dashboard() {
       <div className="mx-4 mt-4 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <p className="font-semibold text-black dark:text-white">💧 Вода</p>
-          <button onClick={addWater} className="text-blue-500 text-xl font-bold leading-none">+</button>
+          <button onClick={addWater} className="text-blue-500 text-xl font-bold leading-none hover:scale-110 active:scale-90 transition-transform">+</button>
         </div>
         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
           <div className="bg-blue-400 h-2 rounded-full transition-all"
@@ -222,10 +222,10 @@ export default function Dashboard() {
         {['breakfast', 'lunch', 'dinner', 'snack'].map((type) => {
           const meal = data.meals.find((m) => m.mealType === type);
           return (
-            <div key={type} className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+            <div key={type} className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm card-enter">
               <div className="flex items-center justify-between mb-2">
                 <p className="font-semibold text-black dark:text-white">{mealTypeLabels[type]}</p>
-                <button onClick={() => openModal(type)} className="text-green-600 text-xl font-bold leading-none">+</button>
+                <button onClick={() => openModal(type)} className="text-green-600 text-xl font-bold leading-none hover:scale-110 active:scale-90 transition-transform">+</button>
               </div>
               {meal && meal.entries.length > 0 ? (
                 <ul className="space-y-1">
