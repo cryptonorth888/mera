@@ -133,12 +133,12 @@ export default function WeightPage() {
   const bmi = lastWeight && height ? (lastWeight / ((height / 100) ** 2)).toFixed(1) : null;
 
   const getBarColor = (w: number) => {
-    if (!targetWeight) return 'bg-green-500 dark:bg-green-400';
+    if (!targetWeight) return 'bg-cyan-500 dark:bg-cyan-400';
     const diff = w - targetWeight;
     const absDiff = Math.abs(diff);
     if (diff < -5) return 'bg-red-500 dark:bg-red-400';
     if (diff < -2) return 'bg-blue-500 dark:bg-blue-400';
-    if (absDiff <= 2) return 'bg-green-500 dark:bg-green-400';
+    if (absDiff <= 2) return 'bg-cyan-500 dark:bg-cyan-400';
     if (diff > 2 && diff <= 5) return 'bg-yellow-500 dark:bg-yellow-400';
     return 'bg-red-500 dark:bg-red-400';
   };
@@ -154,20 +154,20 @@ export default function WeightPage() {
           <div className="grid grid-cols-2 gap-3 text-center">
             <div><p className="text-xs text-gray-500 dark:text-gray-400">Текущий</p><p className="text-lg font-bold text-black dark:text-white">{lastWeight} кг</p></div>
             <div><p className="text-xs text-gray-500 dark:text-gray-400">Цель</p><p className="text-lg font-bold text-black dark:text-white">{targetWeight || '—'} кг</p></div>
-            <div><p className="text-xs text-gray-500 dark:text-gray-400">Изм.</p><p className={`text-lg font-bold ${delta && +delta < 0 ? 'text-green-500' : delta && +delta > 0 ? 'text-red-500' : 'text-black dark:text-white'}`}>{delta ? (delta.startsWith('-') ? delta : '+' + delta) : '—'} кг</p></div>
-            <div><p className="text-xs text-gray-500 dark:text-gray-400">ИМТ</p><p className={`text-lg font-bold ${bmi && +bmi >= 30 ? 'text-red-500' : bmi && +bmi >= 25 ? 'text-yellow-500' : 'text-green-500'}`}>{bmi || '—'}</p></div>
+            <div><p className="text-xs text-gray-500 dark:text-gray-400">Изм.</p><p className={`text-lg font-bold ${delta && +delta < 0 ? 'text-cyan-500' : delta && +delta > 0 ? 'text-red-500' : 'text-black dark:text-white'}`}>{delta ? (delta.startsWith('-') ? delta : '+' + delta) : '—'} кг</p></div>
+            <div><p className="text-xs text-gray-500 dark:text-gray-400">ИМТ</p><p className={`text-lg font-bold ${bmi && +bmi >= 30 ? 'text-red-500' : bmi && +bmi >= 25 ? 'text-yellow-500' : 'text-cyan-500'}`}>{bmi || '—'}</p></div>
           </div>
         </div>
       )}
 
       <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm mb-4 flex gap-3">
         <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="Текущий вес (кг)" className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl text-sm" />
-        <button onClick={addWeight} className="px-6 py-3 bg-green-600 text-white rounded-xl font-semibold">{added ? '✅' : 'Добавить'}</button>
+        <button onClick={addWeight} className="px-6 py-3 bg-cyan-500 text-white rounded-xl font-semibold">{added ? '✅' : 'Добавить'}</button>
       </div>
 
       <div className="flex gap-2 mb-4 flex-wrap">
         {(Object.keys(periodLabels) as Period[]).map((p) => (
-          <button key={p} onClick={() => changePeriod(p)} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${period === p ? 'bg-green-600 text-white shadow-md' : 'bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-200 dark:border-gray-600'}`}>{periodLabels[p]}</button>
+          <button key={p} onClick={() => changePeriod(p)} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${period === p ? 'bg-cyan-500 text-white shadow-md' : 'bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-200 dark:border-gray-600'}`}>{periodLabels[p]}</button>
         ))}
       </div>
 
@@ -208,7 +208,7 @@ export default function WeightPage() {
           <Target size={20} />
           <span className="text-xs">Цели</span>
         </button>
-        <button className="flex flex-col items-center gap-1 text-green-600 font-semibold">
+        <button className="flex flex-col items-center gap-1 text-cyan-500 font-semibold">
           <TrendingDown size={20} />
           <span className="text-xs">Вес</span>
         </button>

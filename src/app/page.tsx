@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, Target, TrendingDown, User } from 'lucide-react';
+import { LayoutDashboard, Target, TrendingDown, User, MessageCircle } from 'lucide-react';
 
 interface MealEntry {
   id: string;
@@ -70,6 +70,18 @@ export default function Dashboard() {
   const [barcodeInput, setBarcodeInput] = useState('');
 
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  const [showOscar, setShowOscar] = useState(false);
+  const [oscarPrompt, setOscarPrompt] = useState('');
+  const [oscarMessages, setOscarMessages] = useState<{ role: string; content: string }[]>([]);
+  const [oscarLoading, setOscarLoading] = useState(false);
+  const oscarChatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (oscarChatEndRef.current) {
+      oscarChatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [oscarMessages]);
 
   useEffect(() => {
     const saved = localStorage.getItem('theme');
@@ -175,13 +187,23 @@ export default function Dashboard() {
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-24">
-      <div className="bg-green-600 dark:bg-green-800 text-white px-4 pt-12 pb-6 rounded-b-3xl">
+      <div className="bg-cyan-500 dark:bg-cyan-700 text-white px-4 pt-12 pb-6 rounded-b-3xl">
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-sm opacity-80">Сегодня</p>
             <p className="text-xl font-bold">{data.date}</p>
           </div>
-          <p className="text-lg font-semibold">Привет, {data.userName || 'Друг'}!</p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowOscar(true)}
+              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition"
+              title="Оскар"
+            >
+              <MessageCircle size={20} />
+              <span className="text-[10px]">Оскар</span>
+            </button>
+            <p className="text-lg font-semibold">Привет, {data.userName || 'Друг'}!</p>
+          </div>
         </div>
 
         <div className="flex justify-center mb-4">
@@ -193,16 +215,16 @@ export default function Dashboard() {
                 strokeDasharray={`${caloriePercent * 2.51} 251`} />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-bold">{data.consumed.calories}</span>
-              <span className="text-sm opacity-80">из {data.goals.calories} ккал</span>
+              <span className="text-3xl font-bold font-mono">{data.consumed.calories}</span>
+              <span className="text-sm opacity-80">из <span className="font-mono">{data.goals.calories}</span> ккал</span>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-2 text-center text-sm">
-          <div><p className="font-semibold">{data.consumed.protein}г</p><p className="opacity-70">Белки</p><p className="text-xs opacity-50">{data.goals.protein}г</p></div>
-          <div><p className="font-semibold">{data.consumed.fat}г</p><p className="opacity-70">Жиры</p><p className="text-xs opacity-50">{data.goals.fat}г</p></div>
-          <div><p className="font-semibold">{data.consumed.carbs}г</p><p className="opacity-70">Углеводы</p><p className="text-xs opacity-50">{data.goals.carbs}г</p></div>
+          <div><p className="font-semibold font-mono">{data.consumed.protein}г</p><p className="opacity-70">Белки</p><p className="text-xs opacity-50"><span className="font-mono">{data.goals.protein}</span>г</p></div>
+          <div><p className="font-semibold font-mono">{data.consumed.fat}г</p><p className="opacity-70">Жиры</p><p className="text-xs opacity-50"><span className="font-mono">{data.goals.fat}</span>г</p></div>
+          <div><p className="font-semibold font-mono">{data.consumed.carbs}г</p><p className="opacity-70">Углеводы</p><p className="text-xs opacity-50"><span className="font-mono">{data.goals.carbs}</span>г</p></div>
         </div>
       </div>
 
@@ -215,7 +237,7 @@ export default function Dashboard() {
           <div className="bg-blue-400 h-2 rounded-full transition-all"
             style={{ width: `${Math.min((data.water.consumed / data.water.goal) * 100, 100)}%` }} />
         </div>
-        <p className="text-sm text-black dark:text-gray-300 mt-1">{data.water.consumed} мл из {data.water.goal} мл</p>
+        <p className="text-sm text-black dark:text-gray-300 mt-1"><span className="font-mono">{data.water.consumed}</span> мл из <span className="font-mono">{data.water.goal}</span> мл</p>
       </div>
 
       <div className="mx-4 mt-4 space-y-3">
@@ -225,7 +247,7 @@ export default function Dashboard() {
             <div key={type} className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm card-enter">
               <div className="flex items-center justify-between mb-2">
                 <p className="font-semibold text-black dark:text-white">{mealTypeLabels[type]}</p>
-                <button onClick={() => openModal(type)} className="text-green-600 text-xl font-bold leading-none hover:scale-110 active:scale-90 transition-transform">+</button>
+                <button onClick={() => openModal(type)} className="text-cyan-500 text-xl font-bold leading-none hover:scale-110 active:scale-90 transition-transform">+</button>
               </div>
               {meal && meal.entries.length > 0 ? (
                 <ul className="space-y-1">
@@ -233,7 +255,7 @@ export default function Dashboard() {
                     <li key={entry.id} className="flex justify-between text-sm text-black dark:text-gray-200 items-center">
                       <span>{entry.foodName} ({entry.servings}г)</span>
                       <div className="flex items-center gap-2">
-                        <span className="font-medium">{entry.calories} ккал</span>
+                        <span className="font-medium font-mono">{entry.calories} ккал</span>
                         <button
                           onClick={() => deleteEntry(entry.id)}
                           className="text-red-500 hover:text-red-700 text-lg leading-none ml-1"
@@ -253,7 +275,7 @@ export default function Dashboard() {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around py-3">
-        <button className="flex flex-col items-center gap-1 text-green-600 font-semibold">
+        <button className="flex flex-col items-center gap-1 text-cyan-500 font-semibold">
           <LayoutDashboard size={20} />
           <span className="text-xs">Дневник</span>
         </button>
@@ -286,7 +308,7 @@ export default function Dashboard() {
               placeholder="Поиск продуктов..."
               value={searchQuery}
               onChange={(e) => doSearch(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-green-500 text-black dark:text-white dark:bg-gray-700"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 text-black dark:text-white dark:bg-gray-700"
               autoFocus
             />
 
@@ -310,7 +332,7 @@ export default function Dashboard() {
                     alert('Продукт не найден в базе.');
                   }
                 }}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-semibold"
+                className="px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm font-semibold"
               >
                 🔍
               </button>
@@ -323,7 +345,7 @@ export default function Dashboard() {
                 setSearchQuery('');
                 setShowCustomForm(!showCustomForm);
               }}
-              className="w-full py-2 text-sm text-green-600 dark:text-green-400 border border-dashed border-green-400 dark:border-green-600 rounded-xl mb-3 hover:bg-green-50 dark:hover:bg-green-900 transition"
+              className="w-full py-2 text-sm text-cyan-500 dark:text-cyan-400 border border-dashed border-cyan-400 dark:border-cyan-600 rounded-xl mb-3 hover:bg-cyan-50 dark:hover:bg-cyan-900 transition"
             >
               ➕ Свой продукт
             </button>
@@ -342,7 +364,7 @@ export default function Dashboard() {
                 </div>
                 <input type="number" value={customFiber} onChange={(e) => setCustomFiber(e.target.value)} placeholder="Клетчатка (г)" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" />
                 {createMessage && (
-                  <div className="bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 text-sm p-3 rounded-lg text-center font-medium animate-pulse">
+                  <div className="bg-cyan-50 dark:bg-cyan-900 text-cyan-700 dark:text-cyan-300 text-sm p-3 rounded-lg text-center font-medium animate-pulse">
                     {createMessage}
                   </div>
                 )}
@@ -378,7 +400,7 @@ export default function Dashboard() {
                     setCreating(false);
                   }}
                   disabled={creating}
-                  className="w-full py-2 bg-green-600 text-white rounded-lg text-sm font-semibold disabled:opacity-50"
+                  className="w-full py-2 bg-cyan-500 text-white rounded-lg text-sm font-semibold disabled:opacity-50"
                 >
                   {creating ? 'Создание...' : 'Создать продукт'}
                 </button>
@@ -391,11 +413,11 @@ export default function Dashboard() {
                   <div
                     key={p.id}
                     onClick={() => { setSelectedProduct(p); setSearchResults([]); setSearchQuery(''); }}
-                    className={`p-3 rounded-xl cursor-pointer border dark:border-gray-600 ${selectedProduct?.id === p.id ? 'border-green-500 bg-green-50 dark:bg-green-900' : 'border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                    className={`p-3 rounded-xl cursor-pointer border dark:border-gray-600 ${selectedProduct?.id === p.id ? 'border-cyan-500 bg-cyan-50 dark:bg-cyan-900' : 'border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
                   >
                     <p className="font-medium text-black dark:text-white">{p.name}</p>
                     {p.brand && <p className="text-xs text-black dark:text-gray-400">{p.brand}</p>}
-                    <p className="text-sm text-black dark:text-gray-300">{p.calories} ккал | Б:{p.protein} Ж:{p.fat} У:{p.carbs}</p>
+                    <p className="text-sm text-black dark:text-gray-300"><span className="font-mono">{p.calories}</span> ккал | Б:<span className="font-mono">{p.protein}</span> Ж:<span className="font-mono">{p.fat}</span> У:<span className="font-mono">{p.carbs}</span></p>
                   </div>
                 ))}
               </div>
@@ -405,9 +427,9 @@ export default function Dashboard() {
               <div className="border-t dark:border-gray-600 pt-4">
                 <p className="font-semibold text-black dark:text-white mb-2">{selectedProduct.name}</p>
                 <p className="text-sm text-black dark:text-gray-300 mb-3">
-                  На 100г: {selectedProduct.calories} ккал | Б:{selectedProduct.protein} Ж:{selectedProduct.fat} У:{selectedProduct.carbs}
+                  На 100г: <span className="font-mono">{selectedProduct.calories}</span> ккал | Б:<span className="font-mono">{selectedProduct.protein}</span> Ж:<span className="font-mono">{selectedProduct.fat}</span> У:<span className="font-mono">{selectedProduct.carbs}</span>
                 </p>
-                <label className="block text-sm font-medium text-black dark:text-white mb-1">Граммы: {servings}г</label>
+                <label className="block text-sm font-medium text-black dark:text-white mb-1">Граммы: <span className="font-mono">{servings}</span>г</label>
                 <input
                   type="range"
                   min="10"
@@ -417,18 +439,108 @@ export default function Dashboard() {
                   onChange={(e) => setServings(Number(e.target.value))}
                   className="w-full mb-2"
                 />
-                <p className="text-sm text-green-600 font-medium">
+                <p className="text-sm text-cyan-500 font-medium font-mono">
                   Итого: {Math.round(selectedProduct.calories * servings / 100)} ккал
                 </p>
                 <button
                   onClick={addProduct}
                   disabled={adding}
-                  className="w-full mt-3 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 disabled:opacity-50"
+                  className="w-full mt-3 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 disabled:opacity-50"
                 >
                   {adding ? 'Добавление...' : 'Добавить'}
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {showOscar && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center">
+          <div className="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl p-4 sm:p-6 w-full max-w-md mx-0 sm:mx-4 max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between mb-3 pb-3 border-b dark:border-gray-700">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🐱</span>
+                <div>
+                  <h3 className="font-bold text-black dark:text-white text-lg">Оскар</h3>
+                  <p className="text-xs text-gray-400">Персональный ИИ-диетолог</p>
+                </div>
+              </div>
+              <button onClick={() => setShowOscar(false)} className="text-black dark:text-white text-xl">✕</button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto max-h-[50vh] space-y-3 mb-3 pr-1">
+              {oscarMessages.map((msg, i) => (
+                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
+                    msg.role === 'user'
+                      ? 'bg-cyan-500 text-white rounded-br-md'
+                      : 'bg-gray-100 dark:bg-gray-700 text-black dark:text-white rounded-bl-md'
+                  }`}>
+                    {msg.content}
+                  </div>
+                </div>
+              ))}
+              <div ref={oscarChatEndRef} />
+              {oscarLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl rounded-bl-md px-4 py-2 text-sm text-gray-400">
+                    Оскар печатает...
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={oscarPrompt}
+                onChange={(e) => setOscarPrompt(e.target.value)}
+                placeholder="Спроси Оскара..."
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-full text-sm"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && oscarPrompt.trim()) {
+                    const userMsg = { role: 'user', content: oscarPrompt };
+                    setOscarMessages([...oscarMessages, userMsg]);
+                    setOscarPrompt('');
+                    setOscarLoading(true);
+                    fetch('/api/oscar', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ prompt: oscarPrompt }),
+                    })
+                      .then(r => r.json())
+                      .then(d => {
+                        setOscarMessages(prev => [...prev, { role: 'assistant', content: d.reply }]);
+                        setOscarLoading(false);
+                      });
+                  }
+                }}
+              />
+              <button
+                onClick={() => {
+                  if (!oscarPrompt.trim()) return;
+                  const userMsg = { role: 'user', content: oscarPrompt };
+                  setOscarMessages([...oscarMessages, userMsg]);
+                  setOscarPrompt('');
+                  setOscarLoading(true);
+                  fetch('/api/oscar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: oscarPrompt }),
+                  })
+                    .then(r => r.json())
+                    .then(d => {
+                      setOscarMessages(prev => [...prev, { role: 'assistant', content: d.reply }]);
+                      setOscarLoading(false);
+                    });
+                }}
+                disabled={oscarLoading}
+                className="px-4 py-2 bg-cyan-500 text-white rounded-full text-sm font-semibold disabled:opacity-50"
+              >
+                →
+              </button>
+            </div>
           </div>
         </div>
       )}

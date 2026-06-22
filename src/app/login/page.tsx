@@ -65,7 +65,7 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@mail.ru"
               required
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-black dark:text-white dark:bg-gray-700 placeholder:text-gray-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-black dark:text-white dark:bg-gray-700 placeholder:text-gray-500"
             />
           </div>
 
@@ -79,14 +79,14 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Введите пароль"
               required
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-black dark:text-white dark:bg-gray-700 placeholder:text-gray-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-black dark:text-white dark:bg-gray-700 placeholder:text-gray-500"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition disabled:opacity-50"
+            className="w-full py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition disabled:opacity-50"
           >
             {loading ? 'Вход...' : 'Войти'}
           </button>
@@ -94,7 +94,7 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-black dark:text-gray-300 mt-6">
           Нет аккаунта?{' '}
-          <Link href="/register" className="text-green-600 hover:underline">
+          <Link href="/register" className="text-cyan-500 hover:underline">
             Зарегистрироваться
           </Link>
         </p>

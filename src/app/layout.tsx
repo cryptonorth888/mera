@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#1B5E20',
+  themeColor: '#06B6D4',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -28,6 +28,7 @@ export default function RootLayout({
     <html lang="ru">
       <head>
         <link rel="apple-touch-icon" href="/icon-192.png" />
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
       </head>
       <body>{children}</body>
     </html>

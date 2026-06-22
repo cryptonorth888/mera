@@ -153,13 +153,13 @@ export default function GoalsPage() {
             {weightWarning}
           </div>
         )}
-        <button onClick={autoCalculate} className="w-full py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">Рассчитать норму</button>
+        <button onClick={autoCalculate} className="w-full py-2 bg-cyan-500 text-white rounded-lg text-sm hover:bg-cyan-600">Рассчитать норму</button>
       </div>
 
       {estimatedDays !== null && weightGoal !== 'maintain' && !weightWarning && (
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm mb-4">
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Примерное время достижения цели</p>
-          <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+          <p className="text-2xl font-bold text-cyan-500 dark:text-cyan-400">
             {estimatedDays} {estimatedDays === 1 ? 'день' : estimatedDays < 5 ? 'дня' : 'дней'}
           </p>
           <p className="text-xs text-gray-400 mt-2">
@@ -176,14 +176,14 @@ export default function GoalsPage() {
           <div><label className="text-sm text-gray-500 dark:text-gray-400">Жиры (г)</label><input type="number" value={fat} onChange={(e) => setFat(Number(e.target.value))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" /></div>
           <div><label className="text-sm text-gray-500 dark:text-gray-400">Углеводы (г)</label><input type="number" value={carbs} onChange={(e) => setCarbs(Number(e.target.value))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" /></div>
         </div>
-        <button onClick={handleSave} className="w-full py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700">{saved ? '✅ Сохранено!' : 'Сохранить'}</button>
+        <button onClick={handleSave} className="w-full py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600">{saved ? '✅ Сохранено!' : 'Сохранить'}</button>
       </div>
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around py-3">
         <button onClick={() => router.push('/')} className="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-black dark:hover:text-white transition">
           <LayoutDashboard size={20} />
           <span className="text-xs">Дневник</span>
         </button>
-        <button className="flex flex-col items-center gap-1 text-green-600 font-semibold">
+        <button className="flex flex-col items-center gap-1 text-cyan-500 font-semibold">
           <Target size={20} />
           <span className="text-xs">Цели</span>
         </button>
