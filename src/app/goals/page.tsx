@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { LayoutDashboard, Target, TrendingDown, User } from 'lucide-react';
 
 export default function GoalsPage() {
   const router = useRouter();
@@ -178,10 +179,22 @@ export default function GoalsPage() {
         <button onClick={handleSave} className="w-full py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700">{saved ? '✅ Сохранено!' : 'Сохранить'}</button>
       </div>
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around py-3">
-        <button onClick={() => router.push('/')} className="text-black dark:text-white">📋 Дневник</button>
-        <button className="text-green-600 font-semibold">🎯 Цели</button>
-        <button onClick={() => router.push('/weight')} className="text-black dark:text-white">📉 Вес</button>
-        <button onClick={() => router.push('/profile')} className="text-black dark:text-white">👤 Профиль</button>
+        <button onClick={() => router.push('/')} className="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-black dark:hover:text-white transition">
+          <LayoutDashboard size={20} />
+          <span className="text-xs">Дневник</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 text-green-600 font-semibold">
+          <Target size={20} />
+          <span className="text-xs">Цели</span>
+        </button>
+        <button onClick={() => router.push('/weight')} className="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-black dark:hover:text-white transition">
+          <TrendingDown size={20} />
+          <span className="text-xs">Вес</span>
+        </button>
+        <button onClick={() => router.push('/profile')} className="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-black dark:hover:text-white transition">
+          <User size={20} />
+          <span className="text-xs">Профиль</span>
+        </button>
       </div>
     </main>
   );
