@@ -59,6 +59,7 @@ export default function Dashboard() {
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [customName, setCustomName] = useState('');
   const [customBrand, setCustomBrand] = useState('');
+  const [customBarcode, setCustomBarcode] = useState('');
   const [customCalories, setCustomCalories] = useState('');
   const [customProtein, setCustomProtein] = useState('');
   const [customFat, setCustomFat] = useState('');
@@ -358,6 +359,7 @@ export default function Dashboard() {
                   <h3 className="font-semibold text-black dark:text-white">Новый продукт</h3>
                   <input type="text" value={customName} onChange={(e) => setCustomName(e.target.value)} placeholder="Название *" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" />
                   <input type="text" value={customBrand} onChange={(e) => setCustomBrand(e.target.value)} placeholder="Бренд (необязательно)" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" />
+                  <input type="text" value={customBarcode} onChange={(e) => setCustomBarcode(e.target.value)} placeholder="Штрихкод (необязательно)" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" />
                   <p className="text-xs text-gray-500 dark:text-gray-400">Пищевая ценность на 100 г продукта</p>
                   <div className="grid grid-cols-2 gap-2">
                     <input type="number" value={customCalories} onChange={(e) => setCustomCalories(e.target.value)} placeholder="Ккал *" className="px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" />
@@ -381,6 +383,7 @@ export default function Dashboard() {
                         body: JSON.stringify({
                           name: customName,
                           brand: customBrand,
+                          barcode: customBarcode || null,
                           calories: parseFloat(customCalories),
                           protein: parseFloat(customProtein),
                           fat: parseFloat(customFat),
@@ -391,7 +394,7 @@ export default function Dashboard() {
                       const data = await res.json();
                       if (data.success) {
                         setCreateMessage(data.becamePublic ? '✅ Продукт добавлен в общую базу!' : '✅ Продукт успешно сохранён!');
-                        setCustomName(''); setCustomBrand(''); setCustomCalories(''); setCustomProtein(''); setCustomFat(''); setCustomCarbs(''); setCustomFiber('');
+                        setCustomName(''); setCustomBrand(''); setCustomBarcode(''); setCustomCalories(''); setCustomProtein(''); setCustomFat(''); setCustomCarbs(''); setCustomFiber('');
                         if (data.product) {
                           setSelectedProduct(data.product);
                           setShowCustomForm(false);

@@ -97,10 +97,30 @@ export default function WeightPage() {
         const log = logs.find(l => l.date.startsWith(dateStr));
         days.push({ date: dateStr, label: d.toLocaleDateString('ru', { day: 'numeric' }), log });
       }
-    } else {
-      const count = period === 'quarter' ? 3 : 12;
-      for (let i = count - 1; i >= 0; i--) {
-        const d = new Date(today.getFullYear(), today.getMonth() - i + offset * count, 1);
+    } else if (period === 'quarter') {
+      const currentQuarter = Math.floor(today.getMonth() / 3);
+      const quarterStartMonth = currentQuarter * 3 + offset * 3;
+      for (let i = 0; i < 3; i++) {
+        const d = new Date(today.getFullYear(), quarterStartMonth + i, 1);
+        const monthStart = new Date(d.getFullYear(), d.getMonth(), 1);
+        const monthEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+        const monthLogs = logs.filter(l => {
+          const date = new Date(l.date);
+          return date >= monthStart && date <= monthEnd;
+        });
+        const avgWeight = monthLogs.length > 0
+          ? Math.round(monthLogs.reduce((sum, l) => sum + l.weight, 0) / monthLogs.length * 10) / 10
+          : null;
+        days.push({
+          date: monthStart.toISOString().split('T')[0],
+          label: monthStart.toLocaleDateString('ru', { month: 'short' }),
+          log: avgWeight ? { id: '', date: '', weight: avgWeight } : undefined,
+        });
+      }
+    } else if (period === 'year') {
+      const yearStart = today.getFullYear() + offset;
+      for (let i = 0; i < 12; i++) {
+        const d = new Date(yearStart, i, 1);
         const monthStart = new Date(d.getFullYear(), d.getMonth(), 1);
         const monthEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0);
         const monthLogs = logs.filter(l => {

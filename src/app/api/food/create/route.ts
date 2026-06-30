@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, brand, calories, protein, fat, carbs, fiber } = body;
+    const { name, brand, barcode, calories, protein, fat, carbs, fiber } = body;
 
     if (!name || !calories || !protein || !fat || !carbs) {
       return NextResponse.json({ error: 'Заполните все обязательные поля' }, { status: 400 });
@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         brand: brand || '',
+        barcode: barcode || null,
         calories,
         protein,
         fat,
